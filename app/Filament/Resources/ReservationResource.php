@@ -4,20 +4,24 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
+use App\Filament\Resources\ReservationResource\RelationManagers\DatesRelationManager;
 use App\Models\Reservation;
 use App\Models\Responsible;
 use App\Models\Room;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -47,17 +51,23 @@ class ReservationResource extends Resource
                     ->label(__('Responsible'))
                     ->options(Responsible::all()->pluck('name', 'id'))
                     ->native(false)
+                    ->columnSpan(2)
                     ->searchable(),
-                DateTimePicker::make('start_at')
-                    ->seconds(false)
-                    ->required(),
-                DateTimePicker::make('end_at')
-                    ->seconds(false)
-                    ->required(),
                 TextInput::make('description')
                     ->columnSpan(4)
                     ->required()
                     ->maxLength(191),
+                Toggle::make('is_confirmed')->inline()->columnSpan(4),
+                Repeater::make('dates')
+                    ->relationship()
+                    ->schema([
+                        DateTimePicker::make('start_at')
+                            ->seconds(false)
+                            ->required(),
+                        DateTimePicker::make('end_at')
+                            ->seconds(false)
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -78,12 +88,12 @@ class ReservationResource extends Resource
                     ->description(fn(Reservation $record): string => $record->responsible->phone)
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('start_at')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
-                TextColumn::make('end_at')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                // TextColumn::make('start_at')
+                //     ->dateTime('d/m/Y H:i')
+                //     ->sortable(),
+                // TextColumn::make('end_at')
+                //     ->dateTime('d/m/Y H:i')
+                //     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -92,6 +102,7 @@ class ReservationResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                ToggleColumn::make('is_confirmed')
             ])
             ->filters([
                 //
@@ -109,7 +120,7 @@ class ReservationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            DatesRelationManager::class,
         ];
     }
 

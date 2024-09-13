@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Reservation extends Model
 {
@@ -12,8 +13,7 @@ class Reservation extends Model
 
     protected $fillable = [
         'description',
-        'start_at',
-        'end_at',
+        'is_confirmed',
         'responsible_id',
         'room_id'
     ];
@@ -26,5 +26,10 @@ class Reservation extends Model
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function dates(): HasMany
+    {
+        return $this->hasMany(ReservationDate::class);
     }
 }

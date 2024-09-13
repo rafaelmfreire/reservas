@@ -6,12 +6,14 @@ use App\Filament\Resources\RoomResource\Pages;
 use App\Filament\Resources\RoomResource\RelationManagers;
 use App\Models\Room;
 use Filament\Forms;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
@@ -37,6 +39,7 @@ class RoomResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(191),
+                ColorPicker::make('color'),
                 TextInput::make('description')
                     ->required()
                     ->maxLength(191),
@@ -64,6 +67,7 @@ class RoomResource extends Resource
                 TextColumn::make('resources')
                     ->badge()
                     ->searchable(),
+                ColorColumn::make('color'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
