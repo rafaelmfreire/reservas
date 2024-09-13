@@ -12,6 +12,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -41,8 +42,10 @@ class ReservationResource extends Resource
                     ->native(false)
                     ->searchable(),
                 Forms\Components\DateTimePicker::make('start_at')
+                    ->seconds(false)
                     ->required(),
                 Forms\Components\DateTimePicker::make('end_at')
+                    ->seconds(false)
                     ->required(),
                 Textarea::make('description')
                     ->columnSpan(3)
@@ -55,16 +58,16 @@ class ReservationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('responsible_id')
-                    ->numeric()
+                TextColumn::make('responsible.name')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('start_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

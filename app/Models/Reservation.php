@@ -14,6 +14,7 @@ class Reservation extends Model
         'description',
         'start_at',
         'end_at',
+        'responsible_id'
     ];
 
     public function responsible(): BelongsTo
