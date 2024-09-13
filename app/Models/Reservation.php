@@ -14,11 +14,17 @@ class Reservation extends Model
         'description',
         'start_at',
         'end_at',
-        'responsible_id'
+        'responsible_id',
+        'room_id'
     ];
 
     public function responsible(): BelongsTo
     {
         return $this->belongsTo(Responsible::class);
+    }
+
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(Room::class);
     }
 }

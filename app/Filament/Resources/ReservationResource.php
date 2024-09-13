@@ -6,13 +6,18 @@ use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
 use App\Models\Reservation;
 use App\Models\Responsible;
+use App\Models\Room;
 use Filament\Forms;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,24 +36,26 @@ class ReservationResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->columns(3)
+            ->columns(4)
             ->schema([
-                // Forms\Components\TextInput::make('responsible_id')
-                //     ->required()
-                //     ->numeric(),
+                Select::make('room_id')
+                    ->label(__('Room'))
+                    ->options(Room::all()->pluck('name', 'id'))
+                    ->native(false)
+                    ->searchable(),
                 Select::make('responsible_id')
                     ->label(__('Responsible'))
                     ->options(Responsible::all()->pluck('name', 'id'))
                     ->native(false)
                     ->searchable(),
-                Forms\Components\DateTimePicker::make('start_at')
+                DateTimePicker::make('start_at')
                     ->seconds(false)
                     ->required(),
-                Forms\Components\DateTimePicker::make('end_at')
+                DateTimePicker::make('end_at')
                     ->seconds(false)
                     ->required(),
-                Textarea::make('description')
-                    ->columnSpan(3)
+                TextInput::make('description')
+                    ->columnSpan(4)
                     ->required()
                     ->maxLength(191),
             ]);
@@ -58,22 +65,30 @@ class ReservationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('responsible.name')
+                TextColumn::make('description')
+                    ->size(TextColumnSize::Large)
+                    ->weight(FontWeight::Bold)
+                    ->limit(65)
+                    ->searchable(),
+                TextColumn::make('room.name')
+                    ->description(fn(Reservation $record): string => $record->room->capacity . ' pessoas')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('start_at')
+                TextColumn::make('responsible.name')
+                    ->description(fn(Reservation $record): string => $record->responsible->phone)
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('start_at')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('end_at')
+                TextColumn::make('end_at')
                     ->dateTime('d/m/Y H:i')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
