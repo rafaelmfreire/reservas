@@ -60,6 +60,7 @@ class ReservationResource extends Resource
                 Toggle::make('is_confirmed')->inline()->columnSpan(4),
                 Repeater::make('dates')
                     ->relationship()
+                    ->columnSpan(4)
                     ->schema([
                         DateTimePicker::make('start_at')
                             ->seconds(false)
@@ -67,7 +68,9 @@ class ReservationResource extends Resource
                         DateTimePicker::make('end_at')
                             ->seconds(false)
                             ->required(),
-                    ]),
+                    ])->addActionLabel('Adicionar nova data')
+                    ->grid(4)
+                    ->minItems(1),
             ]);
     }
 
