@@ -66,6 +66,7 @@ class ReservationResource extends Resource
                             ->seconds(false)
                             ->required(),
                         DateTimePicker::make('end_at')
+                            ->after('start_at')
                             ->seconds(false)
                             ->required(),
                     ])->addActionLabel('Adicionar nova data')
