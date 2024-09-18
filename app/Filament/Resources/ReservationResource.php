@@ -6,8 +6,10 @@ use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
 use App\Filament\Resources\ReservationResource\RelationManagers\DatesRelationManager;
 use App\Models\Reservation;
+use App\Models\ReservationDate;
 use App\Models\Responsible;
 use App\Models\Room;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
@@ -16,6 +18,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
@@ -64,6 +67,25 @@ class ReservationResource extends Resource
                     ->schema([
                         DateTimePicker::make('start_at')
                             ->seconds(false)
+                            ->rules([
+                                // fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                //     dd($get('description'));
+                                //     $reservations = ReservationDate::join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
+                                //         ->where('room_id', $get('room_id'))
+                                //         ->where('start_at', '<', $value)
+                                //         ->where('end_at', '>', $value)
+                                //         ->get();
+                                //     if ($reservations->count() > 0) {
+                                //         $fail('A sala já está reservada para esta data.');
+                                //     }
+                                // },
+                                fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                    dd($get);
+                                    if ($get('room_id') === 1) {
+                                        $fail("The {$attribute} is invalid.");
+                                    }
+                                },
+                            ])
                             ->required(),
                         DateTimePicker::make('end_at')
                             ->after('start_at')
