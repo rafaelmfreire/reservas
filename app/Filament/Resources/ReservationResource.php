@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use App\Models\ReservationDate;
 use App\Models\Responsible;
 use App\Models\Room;
+use Carbon\Carbon;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
@@ -28,6 +29,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 
 class ReservationResource extends Resource
 {
@@ -49,6 +51,18 @@ class ReservationResource extends Resource
                     ->label(__('Room'))
                     ->options(Room::all()->pluck('name', 'id'))
                     ->native(false)
+                    // ->rules([
+                    //     fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                    //         $reservations = ReservationDate::join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
+                    //             ->where('room_id', $get('room_id'))
+                    //             ->where('start_at', '<', Carbon::parse(collect($get('dates'))->first()['start_at'])->format('Y-m-d H:i'))
+                    //             ->where('end_at', '>', Carbon::createFromTimestamp(collect($get('dates'))->first()['end_at']))
+                    //             ->get();
+                    //         if ($reservations->count() > 0) {
+                    //             $fail('A sala já está reservada para esta data.');
+                    //         }
+                    //     },
+                    // ])
                     ->searchable(),
                 Select::make('responsible_id')
                     ->label(__('Responsible'))
@@ -68,21 +82,14 @@ class ReservationResource extends Resource
                         DateTimePicker::make('start_at')
                             ->seconds(false)
                             ->rules([
-                                // fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                //     dd($get('description'));
-                                //     $reservations = ReservationDate::join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
-                                //         ->where('room_id', $get('room_id'))
-                                //         ->where('start_at', '<', $value)
-                                //         ->where('end_at', '>', $value)
-                                //         ->get();
-                                //     if ($reservations->count() > 0) {
-                                //         $fail('A sala já está reservada para esta data.');
-                                //     }
-                                // },
                                 fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                    dd($get);
-                                    if ($get('room_id') === 1) {
-                                        $fail("The {$attribute} is invalid.");
+                                    $reservations = ReservationDate::join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
+                                        ->where('room_id', $get('../../room_id'))
+                                        ->where('start_at', '<', Carbon::parse($get('end_at'))->format('Y-m-d H:i'))
+                                        ->where('end_at', '>', Carbon::parse($get('start_at'))->format('Y-m-d H:i'))
+                                        ->get();
+                                    if ($reservations->count() > 0) {
+                                        $fail('A sala já está reservada para esta data.');
                                     }
                                 },
                             ])
