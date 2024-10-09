@@ -1,7 +1,3 @@
 @import '/vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
-
-.fi-input-wrp {
-    @apply w-1/3;
-}
