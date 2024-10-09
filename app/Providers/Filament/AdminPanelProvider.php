@@ -81,6 +81,7 @@ class AdminPanelProvider extends PanelProvider
                         'slotMinTime' => "07:00:00",
                         'slotMaxTime' => "22:30:00"
                     ])
-            );
+            )
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }

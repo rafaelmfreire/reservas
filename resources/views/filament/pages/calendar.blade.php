@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     <x-filament::input.wrapper>
         <x-filament::input.select wire:model.live="selectedRoom">
-            <option value="">Todas</option>
+            <option value="">Todas as salas</option>
             @foreach($rooms as $id => $name)
             <option value="{{ $id }}">{{ $name }}</option>
             @endforeach
