@@ -21,6 +21,7 @@
   "API tokens allow third-party services to authenticate with our application on your behalf.": "Tokens de API permitem que serviços de terceiros autentiquem-se sem precisar utilizar o login e senha do usuário. Pode-se criar um ou mais tokens de API e revogá-los a qualquer momento.",
   "Before proceeding, please check your email for a verification link.": "Antes de prosseguir, por favor, veja se recebeu o link de verificação em seu e-mail",
   "Browser Sessions": "Sessões do navegador",
+  "Calendar": "Calendário",
   "Capacity": "Capacidade",
   "click here to request another": "clique aqui para solicitar outro",
   "Cancel": "Cancelar",
