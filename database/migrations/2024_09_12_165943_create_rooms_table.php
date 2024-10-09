@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('color');
             $table->string('description');
             $table->integer('capacity');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->json('resources')->nullable();
             $table->timestamps();
         });

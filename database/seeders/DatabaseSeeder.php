@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             'color' => '#FF0000',
             'description' => 'Auditório localizado no andar térreo do prédio administrativo do CCHLA',
             'capacity' => 30,
+            'user_id' => 1,
             'resources' => json_encode(['Computador', 'Projetor', 'Webcam', 'Som'], JSON_HEX_TAG)
         ]);
         Room::factory()->create([
@@ -35,6 +36,7 @@ class DatabaseSeeder extends Seeder
             'color' => '#0000FF',
             'description' => 'Auditório localizado no andar térreo do prédio administrativo do CCHLA',
             'capacity' => 80,
+            'user_id' => 1,
             'resources' => json_encode([
                 'Webcam',
                 'Computador',
