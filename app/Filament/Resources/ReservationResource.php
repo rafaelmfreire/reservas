@@ -51,18 +51,6 @@ class ReservationResource extends Resource
                     ->label(__('Room'))
                     ->options(Room::all()->pluck('name', 'id'))
                     ->native(false)
-                    // ->rules([
-                    //     fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                    //         $reservations = ReservationDate::join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
-                    //             ->where('room_id', $get('room_id'))
-                    //             ->where('start_at', '<', Carbon::parse(collect($get('dates'))->first()['start_at'])->format('Y-m-d H:i'))
-                    //             ->where('end_at', '>', Carbon::createFromTimestamp(collect($get('dates'))->first()['end_at']))
-                    //             ->get();
-                    //         if ($reservations->count() > 0) {
-                    //             $fail('A sala já está reservada para esta data.');
-                    //         }
-                    //     },
-                    // ])
                     ->searchable(),
                 Select::make('responsible_id')
                     ->label(__('Responsible'))
@@ -82,13 +70,14 @@ class ReservationResource extends Resource
                         DateTimePicker::make('start_at')
                             ->seconds(false)
                             ->rules([
-                                fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                    $reservations = ReservationDate::join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
+                                fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $form) {
+                                    $reservation = ReservationDate::join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
                                         ->where('room_id', $get('../../room_id'))
                                         ->where('start_at', '<', Carbon::parse($get('end_at'))->format('Y-m-d H:i'))
                                         ->where('end_at', '>', Carbon::parse($get('start_at'))->format('Y-m-d H:i'))
-                                        ->get();
-                                    if ($reservations->count() > 0) {
+                                        ->first();
+
+                                    if ($reservation?->count() > 0 && $reservation->id !== $form->getRecord()->id) {
                                         $fail('A sala já está reservada para esta data.');
                                     }
                                 },
