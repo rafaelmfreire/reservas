@@ -76,7 +76,10 @@ class AdminPanelProvider extends PanelProvider
                             'center' => 'title',
                             'right' => 'dayGridMonth,timeGridWeek,timeGridDay'
                         ],
-                        'allDaySlot' => false
+                        'allDaySlot' => false,
+                        'nowIndicator' => true,
+                        'slotMinTime' => "07:00:00",
+                        'slotMaxTime' => "22:30:00"
                     ])
             );
     }
