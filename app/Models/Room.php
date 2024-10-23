@@ -17,6 +17,7 @@ class Room extends Model
         'description',
         'capacity',
         'resources',
+        'user_id'
     ];
 
     protected $casts = [

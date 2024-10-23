@@ -29,6 +29,8 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ReservationResource extends Resource
@@ -126,6 +128,10 @@ class ReservationResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 ToggleColumn::make('is_confirmed')
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                $rooms = Room::where('user_id', auth()->id())->get();
+                $query->whereBelongsTo($rooms);
+            })
             ->filters([
                 //
             ])
