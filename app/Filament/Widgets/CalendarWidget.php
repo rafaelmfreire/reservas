@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use App\Models\ReservationDate;
 use Filament\Widgets\Widget;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Support\Facades\Auth;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 
 class CalendarWidget extends FullCalendarWidget
@@ -19,6 +20,10 @@ class CalendarWidget extends FullCalendarWidget
 
         return ReservationDate::query()
             ->join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
+            ->join('rooms', 'rooms.id', 'reservations.room_id')
+            ->when(Auth::check(), function (Builder $query) {
+                $query->where('user_id', Auth::user()->id);
+            })
             ->where('start_at', '>=', $info['start'])
             ->where('end_at', '<=', $info['end'])
             ->where('reservations.is_confirmed', true)

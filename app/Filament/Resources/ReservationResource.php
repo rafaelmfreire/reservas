@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Support\Enums\Alignment;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
 use App\Filament\Resources\ReservationResource\RelationManagers\DatesRelationManager;
@@ -51,7 +52,7 @@ class ReservationResource extends Resource
             ->schema([
                 Select::make('room_id')
                     ->label(__('Room'))
-                    ->options(Room::all()->pluck('name', 'id'))
+                    ->options(Room::where('user_id', Auth::user()->id)->pluck('name', 'id'))
                     ->native(false)
                     ->searchable(),
                 Select::make('responsible_id')
@@ -70,6 +71,7 @@ class ReservationResource extends Resource
                     ->columnSpan(4)
                     ->schema([
                         DateTimePicker::make('start_at')
+                            ->minDate(now()->format('Y-m-d H:i'))
                             ->seconds(false)
                             ->rules([
                                 fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $form) {
@@ -79,7 +81,7 @@ class ReservationResource extends Resource
                                         ->where('end_at', '>', Carbon::parse($get('start_at'))->format('Y-m-d H:i'))
                                         ->first();
 
-                                    if ($reservation?->count() > 0 && $reservation->id !== $form->getRecord()->id) {
+                                    if ($reservation?->count() > 0 && $reservation->id !== $form->getRecord()?->id) {
                                         $fail('A sala já está reservada para esta data.');
                                     }
                                 },
@@ -88,8 +90,19 @@ class ReservationResource extends Resource
                         DateTimePicker::make('end_at')
                             ->after('start_at')
                             ->seconds(false)
+                            ->rules([
+                                fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $form) {
+                                    $start_day = Carbon::parse($get('start_at'))->format('Y-m-d');
+                                    $end_day = Carbon::parse($get('end_at'))->format('Y-m-d');
+                                    if ($start_day != $end_day) {
+                                        $fail('Os dias Inicial e Final devem ser os mesmos. Para reservar a sala para mais dias, clique no botão "Adicionar nova data"');
+                                    }
+                                },
+                            ])
                             ->required(),
-                    ])->addActionLabel('Adicionar nova data')
+                    ])
+                    // ->addActionAlignment(Alignment::Start)
+                    ->addActionLabel('Adicionar nova data')
                     ->grid(4)
                     ->minItems(1),
             ]);

@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Room;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Auth;
 
 class Calendar extends Page
 {
@@ -17,7 +18,7 @@ class Calendar extends Page
 
     public function mount()
     {
-        $this->rooms = Room::pluck('name', 'id')->toArray();
+        $this->rooms = Room::where('user_id', Auth::user()->id)->pluck('name', 'id')->toArray();
         $this->selectedRoom = "";
     }
 
