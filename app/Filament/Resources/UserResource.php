@@ -48,6 +48,7 @@ class UserResource extends Resource
                     ->password()
                     ->requiredWith('password')
                     ->dehydrated(false),
+                TextInput::make('slug')->label('URL')->required(),
                 Toggle::make('is_admin')
                     ->label('Administrador?')
             ]);

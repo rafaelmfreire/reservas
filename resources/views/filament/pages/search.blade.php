@@ -1,4 +1,13 @@
-<x-filament-panels::page.simple>
+<x-filament-panels::page.simple class="sm:!max-w-full">
+
+    <ul class="flex items-center space-x-4">
+        @foreach($sectors as $sector)
+        <a href="/consultar/{{$sector}}">
+            <li>{{ $sector }}</li>
+        </a>
+        @endforeach
+    </ul>
+
     <x-filament::input.wrapper>
         <x-filament::input.select wire:model.live="selectedRoom">
             <option value="">Todas as salas</option>
@@ -9,6 +18,6 @@
     </x-filament::input.wrapper>
 
     @livewire(\App\Filament\Widgets\CalendarWidget::class,
-    ['selectedRoom' => $selectedRoom],
+    ['selectedRoom' => $selectedRoom, 'selectedSector' => basename(request()->getRequestUri())],
     key(str()->random()))
 </x-filament-panels::page.simple>

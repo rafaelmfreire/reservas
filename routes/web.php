@@ -17,5 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/search', Search::class)->name('search');
+Route::get('/consultar/{sector}', Search::class)->name('search');
 // Route::get('/my-page', MyPage::class)->name('my-page');
