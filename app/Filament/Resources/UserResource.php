@@ -7,12 +7,14 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextColumn\TextColumnSize;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -46,6 +48,8 @@ class UserResource extends Resource
                     ->password()
                     ->requiredWith('password')
                     ->dehydrated(false),
+                Toggle::make('is_admin')
+                    ->label('Administrador?')
             ]);
     }
 
@@ -57,6 +61,8 @@ class UserResource extends Resource
                     ->size(TextColumnSize::Large)
                     ->weight(FontWeight::Bold),
                 TextColumn::make('email'),
+                ToggleColumn::make('is_admin')
+                    ->label('Administrador')
             ])
             ->filters([
                 //
