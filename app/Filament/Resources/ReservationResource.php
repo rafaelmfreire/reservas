@@ -71,7 +71,9 @@ class ReservationResource extends Resource
                     ->columnSpan(4)
                     ->schema([
                         DateTimePicker::make('start_at')
-                            ->minDate(now()->format('Y-m-d H:i'))
+                            // ->native(false)
+                            // ->minutesStep(30)
+                            ->minDate(now()->format('Y-m-d'))
                             ->seconds(false)
                             ->rules([
                                 fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $form) {
@@ -83,6 +85,11 @@ class ReservationResource extends Resource
 
                                     if ($reservation?->count() > 0 && $reservation->id !== $form->getRecord()?->id) {
                                         $fail('A sala já está reservada para esta data.');
+                                    }
+
+                                    $start_time = Carbon::parse($get('start_at'))->format('H');
+                                    if ($start_time < 7) {
+                                        $fail('O horário das reservas deve ser entre 7h e 22h');
                                     }
                                 },
                             ])
@@ -96,6 +103,12 @@ class ReservationResource extends Resource
                                     $end_day = Carbon::parse($get('end_at'))->format('Y-m-d');
                                     if ($start_day != $end_day) {
                                         $fail('Os dias Inicial e Final devem ser os mesmos. Para reservar a sala para mais dias, clique no botão "Adicionar nova data"');
+                                    }
+
+                                    $end_hour = Carbon::parse($get('end_at'))->format('H');
+                                    $end_minute = Carbon::parse($get('end_at'))->format('i');
+                                    if ($end_hour > 22 || ($end_hour == 22 && $end_minute > 0)) {
+                                        $fail('O horário das reservas deve ser entre 7h e 22h');
                                     }
                                 },
                             ])
