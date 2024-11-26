@@ -22,7 +22,23 @@ class DatabaseSeeder extends Seeder
             'email' => 'r4faelmf@gmail.com',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
             'is_admin' => true,
-            'slug' => 'rafael'
+            'slug' => 'rafael',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'CCHLA',
+            'email' => 'cchla@gmail.com',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'is_admin' => false,
+            'slug' => 'cchla',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'SEPA',
+            'email' => 'sepa@gmail.com',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'is_admin' => false,
+            'slug' => 'sepa',
         ]);
 
         Room::factory()->create([
@@ -30,7 +46,7 @@ class DatabaseSeeder extends Seeder
             'color' => '#FF0000',
             'description' => 'Auditório localizado no andar térreo do prédio administrativo do CCHLA',
             'capacity' => 30,
-            'user_id' => 1,
+            'user_id' => 2,
             'resources' => json_encode(['Computador', 'Projetor', 'Webcam', 'Som'], JSON_HEX_TAG)
         ]);
         Room::factory()->create([
@@ -38,7 +54,29 @@ class DatabaseSeeder extends Seeder
             'color' => '#0000FF',
             'description' => 'Auditório localizado no andar térreo do prédio administrativo do CCHLA',
             'capacity' => 80,
-            'user_id' => 1,
+            'user_id' => 2,
+            'resources' => json_encode([
+                'Webcam',
+                'Computador',
+                'Projetor',
+                'Som'
+            ])
+        ]);
+
+        Room::factory()->create([
+            'name' => 'Sala 01',
+            'color' => '#0000FF',
+            'description' => 'Sala de Aula',
+            'capacity' => 30,
+            'user_id' => 3,
+            'resources' => json_encode(['Computador', 'Projetor', 'Webcam', 'Som'], JSON_HEX_TAG)
+        ]);
+        Room::factory()->create([
+            'name' => 'Sala 02',
+            'color' => '#0000FF',
+            'description' => 'Mini auditório',
+            'capacity' => 50,
+            'user_id' => 3,
             'resources' => json_encode([
                 'Webcam',
                 'Computador',

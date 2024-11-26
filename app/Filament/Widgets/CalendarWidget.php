@@ -20,15 +20,15 @@ class CalendarWidget extends FullCalendarWidget
     {
         $selectedRoom = $this->selectedRoom;
 
-        $selectedSector = User::where('name', $this->selectedSector)->first()->id;
-
+        // dd($this->selectedSector);
         return ReservationDate::query()
             ->join('reservations', 'reservations.id', 'reservation_dates.reservation_id')
             ->join('rooms', 'rooms.id', 'reservations.room_id')
             ->when(Auth::check(), function (Builder $query) {
                 $query->where('user_id', Auth::user()->id);
             })
-            ->when(!Auth::check(), function (Builder $query) use ($selectedSector) {
+            ->when(!Auth::check() && empty($selectedRoom), function (Builder $query) {
+                $selectedSector = User::where('name', $this->selectedSector)->first()->id;
                 $query->where('user_id', $selectedSector);
             })
             ->where('start_at', '>=', $info['start'])

@@ -18,19 +18,19 @@ class Search extends SimplePage
     public ?string $selectedSector = null;
     public ?string $selectedRoom = null;
 
-    public function mount()
+    public function mount($sector)
     {
-        $basename = basename(request()->getRequestUri());
-        $this->sectors = User::where('is_admin', false)->pluck('name', 'title', 'id')->toArray();
+        $this->sectors = User::where('is_admin', false)->pluck('name', 'id')->toArray();
 
-        // reset($this->sectors);
-        $this->selectedSector = $basename;
-        $sector = User::where('name', $basename)->first()->id;
+        $this->selectedSector = $sector;
+        $sectorId = User::where('name', $sector)->where('is_admin', false)->first()?->id;
 
-        $this->rooms = Room::where('user_id', $sector)
-            ->whereHas('user', function ($query) {
-                $query->where('is_admin', false);
-            })->pluck('name', 'id')->toArray();
+        if (is_null($sectorId)) {
+            abort(404, 'Página não encontrada.');
+        }
+
+        $this->rooms = Room::where('user_id', $sectorId)
+            ->pluck('name', 'id')->toArray();
 
         $this->selectedRoom = "";
     }
