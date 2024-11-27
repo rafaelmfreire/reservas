@@ -3,6 +3,5 @@
 @config 'tailwind.config.js';
 
 .fi-simple-main {
-    /* min-width: 90%; */
     @apply sm:max-w-7xl !important;
 }

@@ -3,6 +3,7 @@
 use App\Filament\Pages\Search;
 use App\Filament\Pages\Solicitation;
 use App\Livewire\CreateReservation;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,7 +18,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $sectors = User::withCount('rooms')->where('is_admin', false)->get();
+    return view('welcome', ['sectors' => $sectors]);
 });
 Route::get('/consultar/{sector}', Search::class)->name('search');
 Route::get('/solicitar', Solicitation::class)->name('solicitation');
