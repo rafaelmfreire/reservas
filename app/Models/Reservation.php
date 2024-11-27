@@ -14,14 +14,14 @@ class Reservation extends Model
     protected $fillable = [
         'description',
         'is_confirmed',
-        'responsible_id',
-        'room_id'
+        'room_id',
+        'responsible',
+        'matriculation',
+        'sector',
+        'phone',
+        'email',
+        'category',
     ];
-
-    public function responsible(): BelongsTo
-    {
-        return $this->belongsTo(Responsible::class);
-    }
 
     public function room(): BelongsTo
     {
