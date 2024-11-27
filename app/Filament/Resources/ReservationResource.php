@@ -153,7 +153,8 @@ class ReservationResource extends Resource
                 ToggleColumn::make('is_confirmed')
             ])
             ->modifyQueryUsing(function (Builder $query) {
-                $rooms = Room::where('user_id', auth()->id())->get();
+                $rooms = auth()->user()->is_admin ? Room::all() : Room::where('user_id', auth()->id())->get();
+                // dd($rooms);
                 $query->whereBelongsTo($rooms);
             })
             ->filters([

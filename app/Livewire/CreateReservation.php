@@ -125,8 +125,7 @@ class CreateReservation extends Component implements HasForms
 
         $this->form->model($reservation)->saveRelationships();
 
-        $this->form->fill();
-        $this->redirect(route('solicitation'));
+        $this->redirect(route('search', ['sector' => $reservation->room->user->slug]));
 
         Notification::make()
             ->title('Solicitação enviada para aprovação.')
