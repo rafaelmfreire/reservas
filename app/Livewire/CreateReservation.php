@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Reservation;
 use App\Models\ReservationDate;
 use App\Models\Responsible;
 use App\Models\Room;
@@ -17,6 +18,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
@@ -26,16 +28,11 @@ class CreateReservation extends Component implements HasForms
     use InteractsWithForms;
 
     public ?array $data = [];
+    public Reservation $reservation;
 
     public function mount(): void
     {
-        $this->form->fill(
-            // [
-            //     'dates' => [
-            //         ['start_at' => '2024-11-26 07:00', 'end_at' => '2024-11-26 22:00']
-            //     ]
-            // ]
-        );
+        $this->form->fill();
     }
 
     public function form(Form $form): Form
@@ -67,11 +64,12 @@ class CreateReservation extends Component implements HasForms
                     ->required()
                     ->maxLength(191),
                 Repeater::make('dates')
-                    // ->relationship()
+                    ->relationship()
                     ->columnSpan(4)
                     ->schema([
                         DateTimePicker::make('start_at')
                             ->minDate(now()->format('Y-m-d'))
+                            ->label('Data Inicial')
                             ->seconds(false)
                             ->rules([
                                 fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $form) {
@@ -95,6 +93,7 @@ class CreateReservation extends Component implements HasForms
                         DateTimePicker::make('end_at')
                             ->after('start_at')
                             ->seconds(false)
+                            ->label('Data Final')
                             ->rules([
                                 fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get, $form) {
                                     $start_day = Carbon::parse($get('start_at'))->format('Y-m-d');
@@ -116,12 +115,23 @@ class CreateReservation extends Component implements HasForms
                     ->grid(4)
                     ->minItems(1),
             ])
-            ->statePath('data');
+            ->statePath('data')
+            ->model(Reservation::class);
     }
 
     public function create(): void
     {
-        dd($this->form->getState());
+        $reservation = Reservation::create($this->form->getState());
+
+        $this->form->model($reservation)->saveRelationships();
+
+        $this->form->fill();
+        $this->redirect(route('solicitation'));
+
+        Notification::make()
+            ->title('Solicitação enviada para aprovação.')
+            ->success()
+            ->send();
     }
 
     public function render()

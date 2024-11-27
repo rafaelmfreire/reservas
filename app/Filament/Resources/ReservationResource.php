@@ -71,8 +71,6 @@ class ReservationResource extends Resource
                     ->columnSpan(4)
                     ->schema([
                         DateTimePicker::make('start_at')
-                            // ->native(false)
-                            // ->minutesStep(30)
                             ->minDate(now()->format('Y-m-d'))
                             ->seconds(false)
                             ->rules([
