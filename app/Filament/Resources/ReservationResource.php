@@ -6,6 +6,7 @@ use Filament\Support\Enums\Alignment;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
 use App\Filament\Resources\ReservationResource\RelationManagers\DatesRelationManager;
+use App\Mail\ReservationConfirmed;
 use App\Models\Reservation;
 use App\Models\ReservationDate;
 use App\Models\Room;
@@ -37,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ReservationResource extends Resource
 {
@@ -186,6 +188,24 @@ class ReservationResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 ToggleColumn::make('is_confirmed')
+                    ->afterStateUpdated(function ($record, $state) {
+
+                        if ($state) {
+                            $room = $record->room->name;
+                            $responsible = $record->responsible;
+                            $sector = $record->room->user->name;
+                            $body = "Olá $responsible, sua reserva da sala $room foi confirmada por $sector.";
+                            $dates = $record->dates;
+                            $mailData = [
+                                'title' => 'Sua reserva da sala ' . $room . ' foi confirmada.',
+                                'body' => $body,
+                                'description' => $record->description,
+                                'dates' => $dates
+                            ];
+
+                            Mail::to($record->email)->send(new ReservationConfirmed($mailData));
+                        }
+                    })
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 $rooms = auth()->user()->is_admin ? Room::all() : Room::where('user_id', auth()->id())->get();

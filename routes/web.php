@@ -2,6 +2,7 @@
 
 use App\Filament\Pages\Search;
 use App\Filament\Pages\Solicitation;
+use App\Http\Controllers\MailController;
 use App\Livewire\CreateReservation;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;

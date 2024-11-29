@@ -70,6 +70,7 @@ class CreateReservation extends Component implements HasForms
                             ->maxLength(191),
                         TextInput::make('email')
                             ->type('email')
+                            ->required()
                             ->maxLength(191),
                         Select::make('category')
                             ->label('Categoria')

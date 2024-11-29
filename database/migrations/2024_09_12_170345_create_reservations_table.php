@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('responsible');
             $table->string('phone');
-            $table->string('email')->nullable();
+            $table->string('email');
             $table->string('matriculation')->nullable();
             $table->string('category');
             $table->string('sector')->nullable();
