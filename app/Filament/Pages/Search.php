@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Room;
 use App\Models\User;
 use Filament\Pages\SimplePage;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Search extends SimplePage
 {
@@ -17,6 +18,11 @@ class Search extends SimplePage
     public array $rooms;
     public ?string $selectedSector = null;
     public ?string $selectedRoom = null;
+
+    public function getTitle(): string|Htmlable
+    {
+        return parent::getTitle() . ' Salas do ' . strtoupper($this->selectedSector);
+    }
 
     public function mount($sector)
     {

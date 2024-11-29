@@ -22,6 +22,6 @@ Route::get('/', function () {
     return view('welcome', ['sectors' => $sectors]);
 });
 Route::get('/consultar/{sector}', Search::class)->name('search');
-Route::get('/solicitar', Solicitation::class)->name('solicitation');
+Route::get('/solicitar/{sector}', Solicitation::class)->name('solicitation');
 // Route::get('/solicitar', CreateReservation::class)->name('solicitation');
 // Route::get('/my-page', MyPage::class)->name('my-page');

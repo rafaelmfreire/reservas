@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -30,9 +31,17 @@ class CreateReservation extends Component implements HasForms
     public ?array $data = [];
     public Reservation $reservation;
 
-    public function mount(): void
+    public function mount($sector): void
     {
-        $this->form->fill();
+        $sectorId = User::where('slug', $sector)->first()->id;
+        $this->form->fill(
+            [
+                'user_id' => $sectorId,
+                'dates' => [
+                    'start_at' => '',
+                ]
+            ]
+        );
     }
 
     public function form(Form $form): Form
@@ -45,7 +54,6 @@ class CreateReservation extends Component implements HasForms
                     ->description('Dados do Responsável pela Reserva')
                     ->columns(3)
                     ->schema([
-
                         TextInput::make('responsible')
                             ->label('Responsável pela Reserva')
                             ->required()
@@ -79,10 +87,10 @@ class CreateReservation extends Component implements HasForms
                     ->description('Dados do Evento')
                     ->columns(4)
                     ->schema([
-                        Select::make('user_id')
-                            ->label('Setor')
-                            ->options(User::where('is_admin', false)->pluck('name', 'id'))
-                            ->native(false),
+                        Hidden::make('user_id'),
+                        // ->label('Setor')
+                        // ->options(User::where('is_admin', false)->pluck('name', 'id'))
+                        // ->native(false),
                         Select::make('room_id')
                             ->label(__('Room'))
                             ->helperText(new HtmlString('<span style="color: #6666dd; font-size: 12px">Selecione o setor para carregar as salas</span>'))
@@ -91,11 +99,12 @@ class CreateReservation extends Component implements HasForms
                             })
                             ->native(false),
                         TextInput::make('description')
-                            ->columnSpan(2)
+                            ->columnSpan(3)
                             ->label('Descrição do evento')
                             ->required()
                             ->maxLength(191),
                         Repeater::make('dates')
+                            ->label('Datas')
                             ->relationship()
                             ->columnSpan(4)
                             ->schema([

@@ -189,7 +189,6 @@ class ReservationResource extends Resource
             ])
             ->modifyQueryUsing(function (Builder $query) {
                 $rooms = auth()->user()->is_admin ? Room::all() : Room::where('user_id', auth()->id())->get();
-                // dd($rooms);
                 $query->whereBelongsTo($rooms);
             })
             ->filters([

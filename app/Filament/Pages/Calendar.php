@@ -18,7 +18,7 @@ class Calendar extends Page
 
     public function mount()
     {
-        $this->rooms = Room::where('user_id', Auth::user()->id)->pluck('name', 'id')->toArray();
+        $this->rooms = Auth::user()->is_admin ? Room::pluck('name', 'id')->toArray() : Room::where('user_id', Auth::user()->id)->pluck('name', 'id')->toArray();
         $this->selectedRoom = "";
     }
 

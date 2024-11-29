@@ -79,7 +79,9 @@ class RoomResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->modifyQueryUsing(function (Builder $query) {
-                $query->where('user_id', Auth::user()->id);
+                if (!auth()->user()->is_admin) {
+                    $query->where('user_id', Auth::user()->id);
+                }
             })
             ->filters([
                 //
