@@ -12,6 +12,7 @@ use App\Models\ReservationDate;
 use App\Models\Room;
 use Carbon\Carbon;
 use Closure;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Radio;
@@ -23,6 +24,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
@@ -203,7 +205,19 @@ class ReservationResource extends Resource
                                 'dates' => $dates
                             ];
 
-                            Mail::to($record->email)->send(new ReservationConfirmed($mailData));
+                            try {
+                                Mail::to($record->email)->send(new ReservationConfirmed($mailData));
+
+                                Notification::make()
+                                    ->title('Email de confirmação enviado para o solicitante.')
+                                    ->success()
+                                    ->send();
+                            } catch (\Throwable $th) {
+                                Notification::make()
+                                    ->title('Houve um erro no envio do email de confirmação.')
+                                    ->danger()
+                                    ->send();
+                            }
                         }
                     })
             ])

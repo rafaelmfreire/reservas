@@ -28,7 +28,7 @@ class ReservationConfirmed extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reserva Confirmada',
+            // subject: 'Reserva Confirmada',
         );
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Mail\ReservationConfirmed;
 use App\Models\Reservation;
 use App\Models\ReservationDate;
 use App\Models\Room;
@@ -21,6 +22,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -171,10 +173,29 @@ class CreateReservation extends Component implements HasForms
 
         $this->redirect(route('search', ['sector' => $reservation->room->user->slug]));
 
-        Notification::make()
-            ->title('Solicitação enviada para aprovação.')
-            ->success()
-            ->send();
+
+        try {
+            $roomName = $reservation->room->name;
+            $body = "Olá $reservation->responsible, sua reserva da sala $roomName foi enviada para aprovação.";
+            $mailData = [
+                'title' => 'Sua reserva da sala ' . $reservation->room->name . ' foi enviada e aguarda confirmação do setor responsável.',
+                'body' => $body,
+                'subject' => 'Reserva enviada para aprovação.',
+                'description' => $reservation->description,
+                'dates' => $reservation->dates
+            ];
+            Mail::to($reservation->email)->send(new ReservationConfirmed($mailData));
+
+            Notification::make()
+                ->title('Solicitação enviada para aprovação.')
+                ->success()
+                ->send();
+        } catch (\Throwable $th) {
+            Notification::make()
+                ->title('Houve um erro no envio do email de confirmação.')
+                ->danger()
+                ->send();
+        }
     }
 
     public function render()
